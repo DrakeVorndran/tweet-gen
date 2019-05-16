@@ -18,18 +18,38 @@ class Listogram(list):
                 self.add_count(word)
 
     def add_count(self, word, count=1):
+        i = self._index(word)
+        if i != None:
+            _, old_count = self[i]
+            self[i] = (word, old_count + count)
+        else:
+            self.append((word, count))
+            self.types += 1
+        self.tokens += count
         """Increase frequency count of given word by given count amount."""
         # TODO: Increase word frequency by count
 
     def frequency(self, word):
+        i = self._index(word)
+        if(i != None):
+            return self[i][1]
+        return 0
         """Return frequency count of given word, or 0 if word is not found."""
         # TODO: Retrieve word frequency count
 
     def __contains__(self, word):
+        for key, _ in self:
+            if key == word:
+                return True
+        return False
         """Return boolean indicating if given word is in this histogram."""
         # TODO: Check if word is in this histogram
 
     def _index(self, target):
+        for i, (word, _) in enumerate(self):
+            if word == target:
+                return i
+        return None
         """Return the index of entry containing given target word if found in
         this histogram, or None if target word is not found."""
         # TODO: Implement linear search to find index of entry with target word
@@ -65,6 +85,9 @@ def main():
                           ' if a wood chuck could chuck wood')
         print_histogram(woodchuck_text.split())
 
-
+def caveman():
+    word = 'abracadabra'
+    print_histogram(list(word))
 if __name__ == '__main__':
     main()
+    # caveman()
