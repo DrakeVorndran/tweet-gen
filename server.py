@@ -24,23 +24,12 @@ HTML = """
 
 app = Flask(__name__)
 
-@app.route('/<int:num>')
-def home_route(num):
+@app.route('/')
+def home_route():
   corpus = open('ready_player_one.txt')
   text = ''
   for line in corpus:
     text +=line[:-1]+' '
   chain = gen_markov(text, 2)
-  sentence = gen_sentence(chain, num)
+  sentence = gen_sentence(chain)
   return HTML.format(styles, sentence)
-
-# def hello_world(num):
-#   words = 'red orange yellow green blue indigo violet'
-#   dictogram = dict_histogram(words)
-#   random_colors = []
-#   for _ in range(num):
-#     random_colors.append(sample(dictogram))
-#   for i, color in enumerate(random_colors):
-#     random_colors[i] = '<div class="box" style="background-color:{};"></div>'.format(color) 
-#   return_list = ' '.join(random_colors)
-#   return HTML.format(styles, return_list)

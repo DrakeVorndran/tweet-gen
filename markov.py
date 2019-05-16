@@ -13,26 +13,38 @@ def gen_markov(words, order=1):
       markov_dict[word1] = dictogram.Dictogram([word2])
   return markov_dict
 
-def gen_sentence(chain, num_words):
-  word_tuple = list(chain.keys())[randint(0,len(chain.keys())-1)]
+def gen_sentence(chain):
+  start_list = []
+  for pair in list(chain.keys()):
+    if pair[0]=="[START]":
+      start_list.append(pair)
+  word_tuple = start_list[randint(0,len(start_list)-1)]
   return_sentence = ''
-  for word in word_tuple:
+  for word in word_tuple[1:]:
     return_sentence += ' ' + word
-  for _ in range(num_words):
+  while word_tuple[-1]!="[STOP]":
     new_word = sampling.sample(chain[word_tuple])
     return_sentence += ' ' + new_word 
     word_list = list(word_tuple[1:])
     word_list.append(new_word)
     word_tuple = tuple(word_list)
-  return return_sentence
+  return return_sentence[:-7] + '.'
+
+def removePuncuation(text):
+  punc_list = [',', '"', ':',"’","‘",'(',')']
+  new_word = ''
+  for _, char in enumerate(text):
+    if(char not in punc_list):
+      new_word += char
+  return new_word
 
 def make_pairs(corpus, order):
   output = []
   for i in range(len(corpus)-order):
     words = []
     for index in range(order):
-      words.append(corpus[index+i])
-    output.append((tuple(words),corpus[i+order]))
+      words.append(removePuncuation(corpus[index+i]))
+    output.append((tuple(words),removePuncuation(corpus[i+order])))
   return output
 
 if __name__ == '__main__':
@@ -41,5 +53,5 @@ if __name__ == '__main__':
   for line in corpus:
     text +=line[:-1]+' '
   chain = gen_markov(text, 2)
-  pprint(chain)
-  print(gen_sentence(chain, 10))
+  # pprint(chain)
+  print(gen_sentence(chain))
